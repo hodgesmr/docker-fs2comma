@@ -30,5 +30,4 @@ build:
 release:
 	docker buildx create --name fs2comma-builder
 	docker buildx use fs2comma-builder
-	docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t ${ORG}/${NAME}:${VERSION} --push .
-	
+	docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t ${ORG}/${NAME} -t ${ORG}/${NAME}:${VERSION} --push .
