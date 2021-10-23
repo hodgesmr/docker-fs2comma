@@ -28,4 +28,7 @@ build:
 
 .EXPORT_ALL_VARIABLES:
 release:
-	docker push ${ORG}/${NAME}:${VERSION}
+	docker buildx create --name fs2comma-builder
+	docker buildx use fs2comma-builder
+	docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t ${ORG}/${NAME}:${VERSION} --push .
+	
