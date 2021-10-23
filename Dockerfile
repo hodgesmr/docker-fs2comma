@@ -1,19 +1,17 @@
-#Builder
-FROM alpine:3.14.2 AS builder
+FROM alpine:3.14.2
 WORKDIR /opt/fs2comma
 
 RUN apk --update add --virtual=build-dependencies g++ git \
+    && apk add libstdc++ \
     && git clone https://github.com/hodgesmr/fs2comma-linux-patch.git \
     && cd fs2comma-linux-patch \
     && g++ -w -o fs2comma *.cpp \
-    && apk del build-dependencies
+    && apk del build-dependencies \
+    && mv /opt/fs2comma/fs2comma-linux-patch/fs2comma /usr/bin \
+    && cd - \
+    && rm -r fs2comma-linux-patch
 
-
-# Output image
-FROM gcr.io/distroless/base-debian11
 USER nobody
-WORKDIR /opt/fs2comma/
-COPY --from=builder /opt/fs2comma/fs2comma-linux-patch/fs2comma .
 
 ARG BUILD_DATE
 ARG NAME
@@ -33,5 +31,5 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.docker.schema-version="1.0" \
       org.label-schema.docker.cmd="docker run ${ORG}/${NAME}"
 
-ENTRYPOINT ["/opt/fs2comma/fs2comma"]
+ENTRYPOINT ["fs2comma"]
 
